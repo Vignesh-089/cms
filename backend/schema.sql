@@ -1,0 +1,33 @@
+CREATE DATABASE smart_calendar;
+
+USE smart_calendar;
+
+CREATE TABLE admin (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100) NOT NULL,
+    phone VARCHAR(15) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE clients (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  full_name VARCHAR(150) NOT NULL,
+  clientName VARCHAR(150),
+  phone VARCHAR(20),
+  event_type VARCHAR(100),
+  eventDate DATE,
+  death_tithi VARCHAR(50),
+  death_paksha VARCHAR(50),
+  notes TEXT,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE yearly_panchang (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  date DATE UNIQUE,
+  tithi VARCHAR(50),
+  paksha VARCHAR(50),
+  masa VARCHAR(50)
+);
