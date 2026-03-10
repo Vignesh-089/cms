@@ -25,7 +25,7 @@ app.use(helmet());
 // CORS configuration
 app.use(cors({
     origin: process.env.NODE_ENV === 'production' 
-        ? ['https://yourdomain.com'] 
+        ? ['https://cms-chi-self.vercel.app'] 
         : ['http://localhost:3000'],
     credentials: true
 }));
