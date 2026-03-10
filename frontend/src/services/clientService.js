@@ -1,30 +1,17 @@
-import axios from "axios";
-
-const API = axios.create({
-  baseURL: "http://localhost:5000/api/clients", // change if needed
-});
-
-// Add token automatically
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("adminToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+import api from "../services/api";
 
 // CREATE OR UPDATE
 export const saveClient = (data) =>
-  API.put("/createUpdateClient", data);
+  api.put("/clients/createUpdateClient", data);
 
 // GET ALL
 export const fetchAllClients = () =>
-  API.get("/getAllClients");
+  api.get("/clients/getAllClients");
 
 // GET BY ID
 export const fetchClientById = (id) =>
-  API.get(`/getClientById/${id}`);
+  api.get(`/clients/getClientById/${id}`);
 
 // DELETE
 export const removeClient = (id) =>
-  API.delete(`/deleteClient/${id}`);
+  api.delete(`/clients/deleteClient/${id}`);

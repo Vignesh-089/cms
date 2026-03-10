@@ -1,8 +1,4 @@
-import axios from "axios";
-
-const API = axios.create({
-  baseURL: "http://localhost:5000/api/panchang",
-});
+import api from "../services/api";
 
 export const getPanchangByDate = (date) =>
-  API.get(`/getPanchangByDate?date=${date}`);
+  api.get(`/panchang/getPanchangByDate?date=${date}`);

@@ -1,27 +1,14 @@
-import axios from "axios";
-
-const API = axios.create({
-  baseURL: "http://localhost:5000/api/dashboard", // change if needed
-});
-
-// Add token automatically
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("adminToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
+import api from "../services/api";
 
 // GET ALL
 export const getLastTenDaysClientDetails = () =>
-  API.get("/getLastTenDaysClientDetails");
+  api.get("/dashboard/getLastTenDaysClientDetails");
 
 export const getLastTenDeathAnniversaryDetails = () =>
-  API.get("/getLastTenDeathAnniversaryDetails");
+  api.get("/dashboard/getLastTenDeathAnniversaryDetails");
 
 export const getDashboardStats = () =>
-  API.get("/getDashboardStats");
+  api.get("/dashboard/getDashboardStats");
 
 export const getEventDistribution = () =>
-  API.get("/getEventDistribution");
+  api.get("/dashboard/getEventDistribution");

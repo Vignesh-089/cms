@@ -1,16 +1,4 @@
-import axios from 'axios';
+import api from "../services/api";
 
-const API = axios.create({
-  baseURL: "http://localhost:5000/api/events", // change if needed
-});
-
-API.interceptors.request.use((config) => {
-  const token = localStorage.getItem("adminToken");
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-export const fetchAllEvents = (data) =>
-  API.get("/getAllEventDetails", data);
+export const fetchAllEvents = () =>
+  api.get("/events/getAllEventDetails");
