@@ -1,11 +1,10 @@
 import axios from "axios";
 
-// const api = axios.create({
-//   baseURL: "http://localhost:5000/api", // change if needed
-// });
-
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
+  baseURL: process.env.REACT_APP_API_URL || "http://localhost:5000/api",
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
 // 🔐 Attach token automatically
@@ -19,10 +18,13 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-// 🚨 Handle 401 globally (optional but recommended)
+// 🚨 Handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    if (error.response?.status === 401) {
+      localStorage.removeItem("adminToken");
+    }
     return Promise.reject(error);
   }
 );
