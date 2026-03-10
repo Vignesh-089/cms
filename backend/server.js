@@ -24,9 +24,17 @@ app.use(helmet());
 
 // CORS configuration
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' 
-        ? ['https://cms-chi-self.vercel.app'] 
-        : ['http://localhost:3000'],
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            "http://localhost:3000"
+        ];
+
+        if (!origin || origin.endsWith(".vercel.app") || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     credentials: true
 }));
 
@@ -74,7 +82,7 @@ app.use('*', (req, res) => {
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error('Global error:', err);
-    
+
     // Handle specific MySQL errors
     if (err.code === 'ER_DUP_ENTRY') {
         return res.status(400).json({
@@ -82,14 +90,14 @@ app.use((err, req, res, next) => {
             message: 'Duplicate entry found'
         });
     }
-    
+
     if (err.code === 'ER_NO_REFERENCED_ROW') {
         return res.status(400).json({
             success: false,
             message: 'Referenced record does not exist'
         });
     }
-    
+
     res.status(err.status || 500).json({
         success: false,
         message: err.message || 'Internal server error'
@@ -102,12 +110,12 @@ const PORT = process.env.PORT || 5000;
 const startServer = async () => {
     // Test database connection
     const isDbConnected = await testConnection();
-    
+
     if (!isDbConnected) {
         console.error('Failed to connect to database. Exiting...');
         process.exit(1);
     }
-    
+
     app.listen(PORT, () => {
         console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
     });
