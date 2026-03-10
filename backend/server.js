@@ -24,18 +24,9 @@ app.use(helmet());
 
 // CORS configuration
 app.use(cors({
-    origin: function (origin, callback) {
-        const allowedOrigins = [
-            "http://localhost:3000"
-        ];
-
-        if (!origin || origin.endsWith(".vercel.app") || allowedOrigins.includes(origin)) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    credentials: true
+  origin: "*",
+  methods: ["GET","POST","PUT","DELETE"],
+  credentials: true
 }));
 
 // Rate limiting
