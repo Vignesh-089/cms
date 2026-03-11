@@ -1,3 +1,5 @@
+const { getCalculatedAnniversary } = require("../utils/anniversaryHelper");
+
 const getLastTenDaysClientDetails = async (req, res) => {
     try {
         const [rows] = await req.db.query(
@@ -18,19 +20,49 @@ const getLastTenDaysClientDetails = async (req, res) => {
 
 const getLastTenDeathAnniversaryDetails = async (req, res) => {
     try {
-        const [rows] = await req.db.query(
-            `SELECT full_name, clientName, death_tithi, death_paksha, eventDate, event_type FROM clients WHERE eventDate BETWEEN NOW() AND DATE_ADD(NOW(), INTERVAL 10 DAY) AND event_type = 'Death Anniversary'`
+
+        const [clients] = await req.db.query(
+            `SELECT * FROM clients WHERE event_type = 'Death Anniversary'`
         );
+
+        const today = new Date();
+        const tenDaysLater = new Date();
+        tenDaysLater.setDate(today.getDate() + 10);
+
+        const results = [];
+
+        for (const client of clients) {
+
+            const anniversary = await getCalculatedAnniversary(
+                req.db,
+                client.death_tithi,
+                client.death_paksha,
+                client.death_masa
+            );
+
+            if (!anniversary.calculated_anniversary_date) continue;
+
+            const anniversaryDate = new Date(anniversary.calculated_anniversary_date);
+
+            if (anniversaryDate >= today && anniversaryDate <= tenDaysLater) {
+                results.push({
+                    ...client,
+                    calculated_anniversary_date: anniversary.calculated_anniversary_date
+                });
+            }
+        }
+
         res.status(200).json({
             success: true,
-            data: rows
-        })
+            data: results
+        });
+
     } catch (error) {
         console.log("Server Error", error);
         res.status(500).json({
             success: false,
             message: 'Server Error'
-        })
+        });
     }
 };
 
