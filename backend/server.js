@@ -17,7 +17,7 @@ app.use(helmet());
 app.use(cors({
   origin: [
     "http://localhost:3000",
-    "https://cms-mliy.onrender.com"
+    "https://cms-chi-self.vercel.app"
   ],
   methods: ["GET","POST","PUT","DELETE","OPTIONS"],
   allowedHeaders: ["Content-Type","Authorization"],
