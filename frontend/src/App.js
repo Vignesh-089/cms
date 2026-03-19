@@ -10,6 +10,7 @@ import Events from './pages/Events';
 import CalendarView from './pages/CalendarView';
 import Settings from './pages/Settings';
 import { MainLayout } from './components/Layout/MainLayout';
+import DeathAnniversaryCalculator from './pages/DeathAnniversaryCalculator';
 
 const PrivateRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -65,6 +66,16 @@ const AppRoutes = () => {
           <PrivateRoute>
             <MainLayout>
               <Events />
+            </MainLayout>
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/anniversaryfinder"
+        element={
+          <PrivateRoute>
+            <MainLayout>
+              <DeathAnniversaryCalculator />
             </MainLayout>
           </PrivateRoute>
         }

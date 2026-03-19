@@ -18,7 +18,6 @@ import {
   DialogContent,
   DialogActions,
   IconButton,
-  Divider,
   Paper,
   Stack,
 } from '@mui/material';
@@ -682,7 +681,7 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
       textOverflow: 'ellipsis',
       whiteSpace: 'nowrap',
     },
-    // Fixed Panchang Box with consistent height
+    // Fixed Panchang Box with responsive layout
     panchangBox: {
       bgcolor: theme.palette.mode === 'dark'
         ? alpha(theme.palette.error.main, 0.15)
@@ -702,10 +701,13 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
       alignItems: 'center',
       gap: 0.5,
     },
-    // Fixed grid layout for panchang items
+    // Responsive grid layout for panchang items
     panchangGrid: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(3, 1fr)',
+      gridTemplateColumns: {
+        xs: '1fr', // Stack vertically on mobile
+        sm: 'repeat(3, 1fr)' // 3 columns on tablet and up
+      },
       gap: 0.75,
     },
     panchangItem: {
@@ -713,24 +715,25 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
         ? alpha(theme.palette.background.paper, 0.3)
         : alpha(theme.palette.background.paper, 0.6),
       borderRadius: 1.5,
-      p: 0.75,
+      p: isMobile ? 1 : 0.75,
       textAlign: 'center',
       border: `1px solid ${alpha(theme.palette.error.main, 0.2)}`,
-      minHeight: 50,
+      minHeight: isMobile ? 60 : 50, // Taller on mobile for better touch targets
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
+      width: '100%', // Full width on mobile
     },
     panchangItemLabel: {
-      fontSize: '0.6rem',
+      fontSize: isMobile ? '0.65rem' : '0.6rem',
       color: theme.palette.text.secondary,
       fontWeight: 600,
       textTransform: 'uppercase',
       letterSpacing: '0.3px',
-      mb: 0.25,
+      mb: 0.5,
     },
     panchangItemValue: {
-      fontSize: isMobile ? '0.75rem' : '0.8rem',
+      fontSize: isMobile ? '0.85rem' : '0.8rem',
       fontWeight: 700,
       color: theme.palette.error.main,
       lineHeight: 1.3,
@@ -757,9 +760,9 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
     actionButton: {
       flex: isMobile ? 1 : 'none',
       minWidth: isMobile ? 0 : 52,
-      height: isMobile ? 32 : 28,
+      height: isMobile ? 36 : 28, // Taller on mobile for better touch
       textTransform: 'none',
-      fontSize: isMobile ? '0.7rem' : '0.7rem',
+      fontSize: isMobile ? '0.75rem' : '0.7rem',
       fontWeight: 500,
       color: theme.palette.text.secondary,
       '&:hover': {
@@ -768,9 +771,9 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
     },
     recalcButton: {
       width: isMobile ? '100%' : 'auto',
-      height: isMobile ? 32 : 28,
+      height: isMobile ? 36 : 28, // Taller on mobile for better touch
       textTransform: 'none',
-      fontSize: isMobile ? '0.7rem' : '0.7rem',
+      fontSize: isMobile ? '0.75rem' : '0.7rem',
       fontWeight: 500,
       color: theme.palette.primary.main,
       '&:hover': {
@@ -799,6 +802,10 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
       bgcolor: theme.palette.background.paper,
       borderRadius: 3,
       border: `1px dashed ${theme.palette.divider}`,
+    },
+    // Mobile-specific placeholder height
+    placeholderBox: {
+      height: isMobile ? 210 : 108, // Taller on mobile for stacked layout
     },
   };
 
@@ -877,13 +884,14 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
                           </Typography>
                         </Box>
 
-                        {/* Death Anniversary Details - Fixed height box */}
+                        {/* Death Anniversary Details - Responsive layout */}
                         {event.type === 'death_anniversary' ? (
                           <Box sx={styles.panchangBox}>
                             <Typography sx={styles.panchangTitle}>
                               <span>🕯️</span> Death Anniversary
                             </Typography>
                             <Box sx={styles.panchangGrid}>
+                              {/* Tithi - Full width on mobile */}
                               <Box sx={styles.panchangItem}>
                                 <Typography sx={styles.panchangItemLabel}>
                                   Tithi
@@ -892,6 +900,8 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
                                   {event.death_tithi || '—'}
                                 </Typography>
                               </Box>
+
+                              {/* Paksha - Full width on mobile */}
                               <Box sx={styles.panchangItem}>
                                 <Typography sx={styles.panchangItemLabel}>
                                   Paksha
@@ -900,6 +910,8 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
                                   {event.death_paksha || '—'}
                                 </Typography>
                               </Box>
+
+                              {/* Next Date - Full width on mobile */}
                               <Box sx={styles.panchangItem}>
                                 <Typography sx={styles.panchangItemLabel}>
                                   Next Date
@@ -914,7 +926,7 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
                           </Box>
                         ) : (
                           /* Placeholder for non-death events to maintain consistent height */
-                          <Box sx={{ height: isMobile ? 100 : 108 }} />
+                          <Box sx={styles.placeholderBox} />
                         )}
                       </Box>
                     </CardContent>
@@ -926,7 +938,7 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
                           size="small"
                           variant="text"
                           onClick={() => onEdit(event)}
-                          startIcon={<Edit sx={{ fontSize: 14 }} />}
+                          startIcon={<Edit sx={{ fontSize: isMobile ? 16 : 14 }} />}
                           sx={styles.actionButton}
                         >
                           Edit
@@ -935,7 +947,7 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
                           size="small"
                           variant="text"
                           onClick={() => onDelete(event.id)}
-                          startIcon={<Delete sx={{ fontSize: 14 }} />}
+                          startIcon={<Delete sx={{ fontSize: isMobile ? 16 : 14 }} />}
                           sx={styles.actionButton}
                         >
                           Delete
@@ -944,7 +956,7 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
                           size="small"
                           variant="text"
                           onClick={() => handleViewEvent(event)}
-                          startIcon={<Visibility sx={{ fontSize: 14 }} />}
+                          startIcon={<Visibility sx={{ fontSize: isMobile ? 16 : 14 }} />}
                           sx={styles.actionButton}
                         >
                           View
@@ -955,7 +967,7 @@ const AllEventsTab = ({ events, onEdit, onDelete, onRecalculate }) => {
                           size="small"
                           variant="text"
                           onClick={() => onRecalculate(event.id)}
-                          startIcon={<Refresh sx={{ fontSize: 14 }} />}
+                          startIcon={<Refresh sx={{ fontSize: isMobile ? 16 : 14 }} />}
                           sx={styles.recalcButton}
                         >
                           {!isMobile && 'Recalculate'}

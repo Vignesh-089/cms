@@ -45,6 +45,7 @@ import { useThemeContext } from '../../contexts/ThemeContext';
 import { useAuth } from '../../contexts/AuthContext';
 import ChangePasswordDialog from "../Auth/ChangePasswordDialog";
 import { useTheme } from '@mui/material/styles';
+import DeathAnniversaryCalculator from '../../pages/DeathAnniversaryCalculator';
 
 const drawerWidth = 240;
 const collapsedDrawerWidth = 72;
@@ -98,6 +99,7 @@ export const MainLayout = ({ children }) => {
     { text: 'Dashboard', icon: <Dashboard />, path: '/dashboard' },
     { text: 'Clients', icon: <People />, path: '/clients' },
     { text: 'Events', icon: <Event />, path: '/events' },
+    { text: 'Anniversary Finder', icon: <Event />, path: '/anniversaryfinder' },
     { text: 'Calendar View', icon: <CalendarToday />, path: '/calendar' },
     { text: 'Settings', icon: <Settings />, path: '/settings' },
   ];

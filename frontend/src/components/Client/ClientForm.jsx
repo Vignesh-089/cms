@@ -22,6 +22,7 @@ import {
     useMediaQuery,
     alpha,
     Fade,
+    Autocomplete,
 } from '@mui/material';
 import {
     Save as SaveIcon,
@@ -45,6 +46,8 @@ import { saveClient, fetchClientById } from "../../services/clientService";
 const ClientMaster = ({ setIsListView, selectedClient }) => {
     const theme = useTheme();
     const isMobile = useMediaQuery(theme.breakpoints.down('sm'));
+    const isTablet = useMediaQuery(theme.breakpoints.between('sm', 'md'));
+    const isLaptop = useMediaQuery(theme.breakpoints.between('md', 'lg'));
     const isDarkMode = theme.palette.mode === 'dark';
 
     const isEditMode = Boolean(selectedClient);
@@ -198,16 +201,10 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
         setErrors(newErrors);
     };
 
-    const validateForm = () => {
-        const fields = ['full_name', 'clientName', 'eventDate', 'phone_number', 'address'];
-        fields.forEach(field => validateField(field));
-        return Object.keys(errors).length === 0;
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const allFields = ['full_name', 'clientName', 'eventDate', 'phone_number', 'address'];
+        const allFields = ['full_name', 'eventDate'];
         const touchedFields = {};
         allFields.forEach(field => touchedFields[field] = true);
         setTouched(touchedFields);
@@ -261,6 +258,14 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
 
     const handleBack = () => {
         setIsListView(true);
+    };
+
+    // Responsive grid column sizes
+    const getGridItemSize = (baseSize) => {
+        if (isMobile) return 12;
+        if (isTablet) return 6;
+        if (isLaptop) return baseSize.laptop || 4;
+        return baseSize.desktop || 3; // Desktop and larger
     };
 
     if (loading) {
@@ -389,8 +394,8 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
                     </Typography>
 
                     <Grid container spacing={2}>
-                        {/* Row 1: 4 fields */}
-                        <Grid item xs={12} sm={6} md={3}>
+                        {/* Row 1: 5 fields on laptop - Full Name, Client Name, Event Type, Date, Phone */}
+                        <Grid item xs={12} sm={6} md={4} lg={2.4}>
                             <TextField
                                 fullWidth
                                 required
@@ -413,10 +418,9 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3}>
+                        <Grid item xs={12} sm={6} md={4} lg={2.4}>
                             <TextField
                                 fullWidth
-                                required
                                 label="Client Name/Relation"
                                 name="clientName"
                                 value={formData.clientName}
@@ -436,67 +440,48 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
                             />
                         </Grid>
 
-                        {/* Event Type */}
-                        <Grid item xs={12} sm={6} md={3}>
-                            <FormControl
-                                fullWidth
-                                required
-                                size="small"
-                                error={touched.eventType && !!errors.eventType}
-                                sx={{
-                                    '& .MuiOutlinedInput-root': {
-                                        borderRadius: 1.5,
-                                        height: 48,
-                                        width: 200,
-                                        bgcolor: isDarkMode
-                                            ? alpha(theme.palette.common.white, 0.05)
-                                            : 'transparent',
-                                    },
+                        <Grid item xs={12} sm={6} md={4} lg={2.4}>
+                            <Autocomplete
+                                options={[
+                                    "Marriage",
+                                    "Death Anniversary",
+                                    "House Warming",
+                                    "Reception",
+                                    "Temple Function",
+                                    "Others",
+                                ]}
+                                value={formData.eventType || null}
+                                onChange={(event, newValue) => {
+                                    setFormData({
+                                        ...formData,
+                                        eventType: newValue,
+                                    });
                                 }}
-                            >
-                                <InputLabel>Event Type</InputLabel>
-                                <Select
-                                    name="eventType"
-                                    value={formData.eventType}
-                                    label="Event Type"
-                                    onChange={handleChange}
-                                    onBlur={handleBlur}
-                                >
-                                    <MenuItem value="Marriage">Marriage</MenuItem>
-                                    <MenuItem value="Death Anniversary">Death Anniversary</MenuItem>
-                                    <MenuItem value="House Warming">House Warming</MenuItem>
-                                    <MenuItem value="Reception">Reception</MenuItem>
-                                    <MenuItem value="Temple Function">Temple Function</MenuItem>
-                                    <MenuItem value="Others">Others</MenuItem>
-                                </Select>
-                            </FormControl>
+                                renderInput={(params) => (
+                                    <TextField
+                                        {...params}
+                                        label="Event Type"
+                                        required
+                                        size="small"
+                                        error={touched.eventType && !!errors.eventType}
+                                        onBlur={handleBlur}
+                                        name="eventType"
+                                        sx={{
+                                            "& .MuiOutlinedInput-root": {
+                                                borderRadius: 1.5,
+                                                height: 48,
+                                                width: 200,
+                                                bgcolor: isDarkMode
+                                                    ? alpha(theme.palette.common.white, 0.05)
+                                                    : "transparent",
+                                            },
+                                        }}
+                                    />
+                                )}
+                            />
                         </Grid>
 
-                        {/* Custom Event Name Field */}
-                        {formData.eventType === "Others" && (
-                            <Grid item xs={12} sm={6} md={3}>
-                                <TextField
-                                    fullWidth
-                                    required
-                                    label="Enter Event Name"
-                                    name="customEventName"
-                                    value={formData.customEventName}
-                                    onChange={handleChange}
-                                    size="small"
-                                    InputProps={{
-                                        sx: {
-                                            borderRadius: 1.5,
-                                            height: 48,
-                                            bgcolor: isDarkMode
-                                                ? alpha(theme.palette.common.white, 0.05)
-                                                : 'transparent',
-                                        },
-                                    }}
-                                />
-                            </Grid>
-                        )}
-
-                        <Grid item xs={12} sm={6} md={3}>
+                        <Grid item xs={12} sm={6} md={4} lg={2.4}>
                             <TextField
                                 fullWidth
                                 required
@@ -521,10 +506,9 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3}>
+                        <Grid item xs={12} sm={6} md={4} lg={2.4}>
                             <TextField
                                 fullWidth
-                                required
                                 label="Phone Number"
                                 name="phone_number"
                                 value={formData.phone_number}
@@ -543,7 +527,32 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3}>
+                        {/* Custom Event Name Field - Full width row when shown */}
+                        {formData.eventType === "Others" && (
+                            <Grid item xs={12}>
+                                <TextField
+                                    fullWidth
+                                    required
+                                    label="Enter Event Name"
+                                    name="customEventName"
+                                    value={formData.customEventName}
+                                    onChange={handleChange}
+                                    size="small"
+                                    InputProps={{
+                                        sx: {
+                                            borderRadius: 1.5,
+                                            height: 48,
+                                            bgcolor: isDarkMode
+                                                ? alpha(theme.palette.common.white, 0.05)
+                                                : 'transparent',
+                                        },
+                                    }}
+                                />
+                            </Grid>
+                        )}
+
+                        {/* Row 2: Occupation, Address (full width on mobile/tablet, 5-col on laptop) */}
+                        <Grid item xs={12} sm={6} md={6} lg={2.4}>
                             <TextField
                                 fullWidth
                                 label="Occupation"
@@ -561,10 +570,9 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={12} md={6}>
+                        <Grid item xs={12} sm={12} md={12} lg={9.6}>
                             <TextField
                                 fullWidth
-                                required
                                 label="Address"
                                 name="address"
                                 value={formData.address}
@@ -577,6 +585,7 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
                                 InputProps={{
                                     sx: {
                                         borderRadius: 1.5,
+                                        width: 200,
                                         bgcolor: isDarkMode
                                             ? alpha(theme.palette.common.white, 0.05)
                                             : "transparent",
@@ -585,8 +594,8 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
                             />
                         </Grid>
 
-                        {/* Row 3: 4 fields */}
-                        <Grid item xs={12} sm={6} md={3}>
+                        {/* Row 3: City, State, Pincode, Notes (4 fields on laptop) */}
+                        <Grid item xs={12} sm={4} md={4} lg={3}>
                             <TextField
                                 fullWidth
                                 label="City"
@@ -604,7 +613,7 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3}>
+                        <Grid item xs={12} sm={4} md={4} lg={3}>
                             <TextField
                                 fullWidth
                                 label="State"
@@ -622,7 +631,7 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3}>
+                        <Grid item xs={12} sm={4} md={4} lg={3}>
                             <TextField
                                 fullWidth
                                 label="Pincode"
@@ -640,7 +649,7 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
                             />
                         </Grid>
 
-                        <Grid item xs={12} sm={6} md={3}>
+                        <Grid item xs={12} sm={12} md={12} lg={3}>
                             <TextField
                                 fullWidth
                                 label="Notes"
@@ -649,10 +658,13 @@ const ClientMaster = ({ setIsListView, selectedClient }) => {
                                 onChange={handleChange}
                                 size="small"
                                 placeholder="Add notes..."
+                                multiline
+                                rows={isMobile ? 3 : 1}
                                 InputProps={{
                                     sx: {
                                         borderRadius: 1.5,
-                                        height: 48,
+                                        width: 200,
+                                        height: isMobile ? 'auto' : 48,
                                         bgcolor: isDarkMode ? alpha(theme.palette.common.white, 0.05) : 'transparent',
                                     },
                                 }}
