@@ -49,11 +49,15 @@ const limiter = rateLimit({
 app.use('/api/auth', limiter);
 
 /* ---------------- ROUTES ---------------- */
+const deathAnniversaryRoutes = require('./routes/deathAnniversaryRoutes');
+
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/clients', require('./routes/clientRoutes'));
 app.use('/api/events', require('./routes/eventRoutes'));
 app.use('/api/dashboard', require('./routes/dashboardRoutes'));
 app.use('/api/panchang', require('./routes/panchangRoutes'));
+app.use('/api/death-anniversary', require('./routes/deathAnniversaryRoutes'));
+app.use('/api/death-anniversary', deathAnniversaryRoutes);
 
 /* ---------------- HEALTH CHECK ---------------- */
 app.get('/health', (req, res) => {
